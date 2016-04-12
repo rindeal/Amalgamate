@@ -87,7 +87,7 @@ class IncludeProcessor
 {
 public:
   IncludeProcessor ()
-    : m_includePattern ("[ \t]*#include[ \t]+(.*)[ t]*")
+    : m_includePattern ("[ \t]*#[ \t]*include[ \t]+(.*)[ t]*")
     , m_macroPattern ("([_a-zA-Z][_0-9a-zA-Z]*)")
     , m_anglePattern ("<([^>]+)>.*")
     , m_quotePattern ("\"([^\"]+)\".*")
