@@ -7,7 +7,7 @@ CXXFLAGS += -std=c++11 -pthread $(LIBS)
 all: $(PROGRAM)
 
 $(PROGRAM): $(wildcard *.cpp) $(wildcard *.h)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 .PHONY: clean
 clean:
