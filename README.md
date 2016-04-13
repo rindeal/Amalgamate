@@ -1,4 +1,5 @@
 # Amalgamate
+[![Build Status](https://travis-ci.org/rindeal/Amalgamate.svg?branch=master)](https://travis-ci.org/rindeal/Amalgamate)
 
 A cross platform command line tool for producing an amalgamation of
 C or C++ sources.
