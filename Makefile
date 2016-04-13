@@ -1,6 +1,6 @@
 PROGRAM = amalgamate
 
-LIBS = -ldl
+LIBS = -ldl -lrt
 CXXFLAGS += -std=c++11 -pthread $(LIBS)
 
 .PHONY: all
