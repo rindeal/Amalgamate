@@ -138,6 +138,7 @@ public:
     : m_name (toolName)
     , m_verbose (false)
     , m_checkSystemIncludes (false)
+    , m_tabs (false)
   {
     setWildcards ("*.cpp;*.c;*.hpp;*.h");
   }
@@ -174,6 +175,11 @@ public:
   void setVerbose ()
   {
     m_verbose = true;
+  }
+
+  void setConvertSpacesToTabs ()
+  {
+    m_tabs = true;
   }
 
   void addDirectoryToSearch (String directoryToSearch)
@@ -626,6 +632,7 @@ private:
 
       line = line.trimEnd();
 
+      if (m_tabs)
       {
         // Turn initial spaces into tabs..
         int numIntialSpaces = 0;
@@ -654,6 +661,7 @@ private:
   const String m_name;
   bool m_verbose;
   bool m_checkSystemIncludes;
+  bool m_tabs;
   StringPairArray m_macrosDefined;
   StringArray m_wildcards;
   StringArray m_forceReincludes;
@@ -793,6 +801,10 @@ int main (int argc, char* argv[])
         break;
       }
     }
+    else if (option.compareIgnoreCase ("-t") == 0)
+    {
+      amalgamator.setConvertSpacesToTabs ();
+    }
     else if (option.compareIgnoreCase ("-v") == 0)
     {
       amalgamator.setVerbose ();
@@ -847,7 +859,7 @@ int main (int argc, char* argv[])
     std::cout << "  " << "\n";
     std::cout << "  SYNOPSIS" << "\n";
     std::cout << "  " << "\n";
-    std::cout << "   " << name << " [-s]" << "\n";
+    std::cout << "   " << name << " [-s] [-t]" << "\n";
     std::cout << "     [-w {wildcards}]" << "\n";
     std::cout << "     [-f {file|macro}]..." << "\n";
     std::cout << "     [-p {file|macro}]..." << "\n";
@@ -877,6 +889,8 @@ int main (int argc, char* argv[])
     std::cout << "  " << "\n";
     std::cout << "    -s                Process #include lines containing angle brackets (i.e." << "\n";
     std::cout << "                      system includes). Normally these are not inlined." << "\n";
+    std::cout << "  " << "\n";
+    std::cout << "    -t                Convert spaces into tabs." << "\n";
     std::cout << "  " << "\n";
     std::cout << "    -w {wildcards}    Specify a comma separated list of file name patterns to" << "\n";
     std::cout << "                      match when deciding to inline (assuming the file can be" << "\n";
