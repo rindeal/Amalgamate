@@ -67,7 +67,7 @@ public:
       {
         std::cout << "Warning: duplicate @remap directive" << std::endl;
       }
-      
+
       wasRemap = true;
     }
 
@@ -426,7 +426,7 @@ private:
       {
         String name;
 
-#if 1 
+#if 1
         if (line.contains ("/*"))
           name = line.fromFirstOccurrenceOf ("#include", false, false)
                      .upToFirstOccurrenceOf ("/*", false, false).trim ();
@@ -868,6 +868,7 @@ int main (int argc, char* argv[])
     std::cout << "     [-p {file|macro}]..." << "\n";
     std::cout << "     [-d {name}={file}]..." << "\n";
     std::cout << "     [-i {dir}]..." << "\n";
+    std::cout << "     [-v]" << "\n";
     std::cout << "     {inputFile} {outputFile}" << "\n";
     std::cout << "  " << "\n";
     std::cout << "  DESCRIPTION" << "\n";
