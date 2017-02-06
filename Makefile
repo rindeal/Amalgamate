@@ -21,5 +21,9 @@ $(PROGRAM): $(SRCS:.cpp=.o)
 clean:
 	$(RM) -v $(PROGRAM) *.gch *.o
 
+check: $(PROGRAM)
+	@# just check if it's able to at least output the usage text
+	./$(PROGRAM) -h
 
-.PHONY: all clean
+
+.PHONY: all clean check
