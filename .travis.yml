@@ -7,6 +7,7 @@ addons:
       - ubuntu-toolchain-r-test
 
 matrix:
+  fast_finish: true
   include:
     - env: MY_CXX='g++-4.8'
       addons: {apt: { packages: [ g++-4.8 ], sources: *sources }}
