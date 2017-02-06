@@ -1,18 +1,22 @@
 PROGRAM = amalgamate
 
 SRCS := Amalgamate.cpp juce_core_amalgam.cpp
-INCS := AppConfig.h juce_core_amalgam.h
 
+CXXLD ?= $(CXX)
 CXXFLAGS ?= -O2
-CXXFLAGS += -std=c++11 -pthread -Wall
+CXXFLAGS += -std=c++11 -pthread -fno-strict-aliasing
+CXXFLAGS += -Wall -Wextra -Wno-ignored-qualifiers
 LIBS += -ldl -lrt
 LDFLAGS += -pthread
 
 
 all: $(PROGRAM)
 
-$(PROGRAM): $(SRCS) $(INCS)
-	$(CXX) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(SRCS) $(LIBS)
+$(PROGRAM): $(SRCS:.cpp=.o)
+	$(CXXLD) -o $@ $(LDFLAGS) $^ $(LIBS)
+
+%.o: %.cpp
+	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $<
 
 clean:
 	$(RM) -v $(PROGRAM) *.gch *.o
