@@ -27,3 +27,4 @@ before_install:
 
 script:
   - make
+  - make check
