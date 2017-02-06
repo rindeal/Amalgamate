@@ -4,17 +4,18 @@ SRCS := Amalgamate.cpp juce_core_amalgam.cpp
 INCS := AppConfig.h juce_core_amalgam.h
 
 CXXFLAGS ?= -O2
-CXXFLAGS += -std=c++11 -pthread
-CXXFLAGS += -Wall
+CXXFLAGS += -std=c++11 -pthread -Wall
 LIBS += -ldl -lrt
-LDFLAGS += -pthread $(LIBS)
+LDFLAGS += -pthread
 
-.PHONY: all
+
 all: $(PROGRAM)
 
 $(PROGRAM): $(SRCS) $(INCS)
-	$(CXX) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(SRCS) $(LDFLAGS)
+	$(CXX) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(SRCS) $(LIBS)
 
-.PHONY: clean
 clean:
 	$(RM) -v $(PROGRAM) *.gch *.o
+
+
+.PHONY: all clean
