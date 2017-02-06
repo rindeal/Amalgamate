@@ -673,6 +673,74 @@ private:
 /******************************************************************************/
 
 //==============================================================================
+
+void print_usage (int, char* argv[])
+{
+  const String name (argv[0]);
+
+  std::cout << "\n";
+  std::cout << "  NAME" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "   " << name << " - produce an amalgamation of C/C++ source files." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "  SYNOPSIS" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "   " << name << " [-s] [-t]" << "\n";
+  std::cout << "     [-w {wildcards}]" << "\n";
+  std::cout << "     [-f {file|macro}]..." << "\n";
+  std::cout << "     [-p {file|macro}]..." << "\n";
+  std::cout << "     [-d {name}={file}]..." << "\n";
+  std::cout << "     [-i {dir}]..." << "\n";
+  std::cout << "     [-h]" << "\n";
+  std::cout << "     [-v]" << "\n";
+  std::cout << "     {inputFile} {outputFile}" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "  DESCRIPTION" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "   Produces an amalgamation of {inputFile} by replacing #include statements with" << "\n";
+  std::cout << "   the contents of the file they refer to. This replacement will only occur if" << "\n";
+  std::cout << "   the file was located in the same directory, or one of the additional include" << "\n";
+  std::cout << "   paths added with the -i option." << "\n";
+  std::cout << "   " << "\n";
+  std::cout << "   Files included in angle brackets (system includes) are only inlined if the" << "\n";
+  std::cout << "   -s option is specified." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "   If an #include line contains a macro instead of a string literal, the list" << "\n";
+  std::cout << "   of definitions provided through the -d option is consulted to convert the" << "\n";
+  std::cout << "   macro into a string." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "   A file will only be inlined once, with subsequent #include lines for the same" << "\n";
+  std::cout << "   file silently ignored, unless the -f option is specified for the file." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "  OPTIONS" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -s                Process #include lines containing angle brackets (i.e." << "\n";
+  std::cout << "                      system includes). Normally these are not inlined." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -t                Convert spaces into tabs." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -w {wildcards}    Specify a comma separated list of file name patterns to" << "\n";
+  std::cout << "                      match when deciding to inline (assuming the file can be" << "\n";
+  std::cout << "                      located). The default setting is \"*.cpp;*.c;*.hpp;*.h\"." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -f {file|macro}   Force reinclusion of the specified file or macro on" << "\n";
+  std::cout << "                      all appearances in #include lines." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -p {file|macro}   Prevent reinclusion of the specified file or macro on" << "\n";
+  std::cout << "                      subsequent appearances in #include lines." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -d {name}={file}  Use {file} for macro {name} if it appears in an #include" << "\n";
+  std::cout << "                      line." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -i {dir}          Additionally look in the specified directory for files when" << "\n";
+  std::cout << "                      processing #include lines." << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -h                Print help and exit" << "\n";
+  std::cout << "  " << "\n";
+  std::cout << "    -v                Verbose output mode" << "\n";
+  std::cout << "\n";
+}
+
 int main (int argc, char* argv[])
 {
   bool error = false;
@@ -805,6 +873,11 @@ int main (int argc, char* argv[])
     {
       amalgamator.setVerbose ();
     }
+    else if (option.compareIgnoreCase ("-h") == 0)
+    {
+      print_usage(argc, argv);
+      return 0;
+    }
     else if (option.startsWith ("-"))
     {
       std::cout << name << ": Unknown option \"" << option << "\"\n";
@@ -847,66 +920,7 @@ int main (int argc, char* argv[])
   }
 
   if (error && usage)
-  {
-    std::cout << "\n";
-    std::cout << "  NAME" << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "   " << name << " - produce an amalgamation of C/C++ source files." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "  SYNOPSIS" << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "   " << name << " [-s] [-t]" << "\n";
-    std::cout << "     [-w {wildcards}]" << "\n";
-    std::cout << "     [-f {file|macro}]..." << "\n";
-    std::cout << "     [-p {file|macro}]..." << "\n";
-    std::cout << "     [-d {name}={file}]..." << "\n";
-    std::cout << "     [-i {dir}]..." << "\n";
-    std::cout << "     [-v]" << "\n";
-    std::cout << "     {inputFile} {outputFile}" << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "  DESCRIPTION" << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "   Produces an amalgamation of {inputFile} by replacing #include statements with" << "\n";
-    std::cout << "   the contents of the file they refer to. This replacement will only occur if" << "\n";
-    std::cout << "   the file was located in the same directory, or one of the additional include" << "\n";
-    std::cout << "   paths added with the -i option." << "\n";
-    std::cout << "   " << "\n";
-    std::cout << "   Files included in angle brackets (system includes) are only inlined if the" << "\n";
-    std::cout << "   -s option is specified." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "   If an #include line contains a macro instead of a string literal, the list" << "\n";
-    std::cout << "   of definitions provided through the -d option is consulted to convert the" << "\n";
-    std::cout << "   macro into a string." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "   A file will only be inlined once, with subsequent #include lines for the same" << "\n";
-    std::cout << "   file silently ignored, unless the -f option is specified for the file." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "  OPTIONS" << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -s                Process #include lines containing angle brackets (i.e." << "\n";
-    std::cout << "                      system includes). Normally these are not inlined." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -t                Convert spaces into tabs." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -w {wildcards}    Specify a comma separated list of file name patterns to" << "\n";
-    std::cout << "                      match when deciding to inline (assuming the file can be" << "\n";
-    std::cout << "                      located). The default setting is \"*.cpp;*.c;*.hpp;*.h\"." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -f {file|macro}   Force reinclusion of the specified file or macro on" << "\n";
-    std::cout << "                      all appearances in #include lines." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -p {file|macro}   Prevent reinclusion of the specified file or macro on" << "\n";
-    std::cout << "                      subsequent appearances in #include lines." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -d {name}={file}  Use {file} for macro {name} if it appears in an #include" << "\n";
-    std::cout << "                      line." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -i {dir}          Additionally look in the specified directory for files when" << "\n";
-    std::cout << "                      processing #include lines." << "\n";
-    std::cout << "  " << "\n";
-    std::cout << "    -v                Verbose output mode" << "\n";
-    std::cout << "\n";
-  }
+    print_usage(argc, argv);
 
   return error ? 1 : 0;
 }
