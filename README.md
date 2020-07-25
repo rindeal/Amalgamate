@@ -22,6 +22,12 @@ examples of source code libraries that have been amalgamated:
 - **[JUCE][2]** http://github.com/vinniefalco/JUCEAmalgam
 - **[TagLib][3]** http://github.com/vinniefalco/TagLibAmalgam
 
+## How to build
+
+On linux simply running `make all` should be sufficient to build the program.
+
+On windows you should use the `build.bat` script which requires the MSVC command line toolchain to be enabled. You can read about how to enable it [here](https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=vs-2019).
+
 ## Usage
 
 ```plain
