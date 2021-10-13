@@ -28,8 +28,9 @@
 
 #include <regex>
 #include <unordered_map>
+#include <memory>
 
-#include "juce_core_amalgam.h"
+#include "juce_core.h"
 
 using namespace juce;
 
@@ -220,7 +221,7 @@ public:
     std::cout << "  Building: " << m_targetFile.getFullPathName() << "...\n";
 
     TemporaryFile temp (m_targetFile);
-    ScopedPointer <FileOutputStream> out (temp.getFile().createOutputStream (1024 * 128));
+    std::unique_ptr <FileOutputStream> out (temp.getFile().createOutputStream (1024 * 128));
 
     if (out == 0)
     {
@@ -286,7 +287,7 @@ public:
 
   static int64 calculateFileHashCode (const File& file)
   {
-    ScopedPointer <FileInputStream> stream (file.createInputStream());
+    std::unique_ptr <FileInputStream> stream (file.createInputStream());
     return stream != 0 ? calculateStreamHashCode (*stream) : 0;
   }
 
@@ -515,13 +516,13 @@ private:
       String trimmed (line.trimStart());
 
       if ((level != 0) && trimmed.startsWith ("//================================================================"))
-        line = String::empty;
+        line = String();
 
       std::string s (line.toUTF8 ());
 
       if (m_remapTable.processLine (s))
       {
-        line = String::empty;
+        line = String();
       }
       else
       {
@@ -575,7 +576,7 @@ private:
               }
               else
               {
-                line = String::empty;
+                line = String();
               }
             }
             else
