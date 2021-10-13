@@ -1,33 +1,53 @@
 PROGRAM = amalgamate
 
 JUCE_CORE_DIR := 3rd/JUCE/modules/juce_core
-
-SRCS := Amalgamate.cpp $(JUCE_CORE_DIR)/juce_core.cpp
+SRCS := Amalgamate.cpp
+JUCE_SRCS :=
+ifeq ($(shell uname -s),Darwin)
+	JUCE_SRCS += $(JUCE_CORE_DIR)/juce_core.mm
+else
+	JUCE_SRCS += $(JUCE_CORE_DIR)/juce_core.cpp
+endif
 
 CXXLD ?= $(CXX)
-CXXFLAGS ?= -O2 -flto
-CXXFLAGS += -std=c++14 -pthread -fno-strict-aliasing
+CXXFLAGS ?= -O2
+CXXFLAGS += -std=c++14 -pthread
 CXXFLAGS += -Wall
 CXXFLAGS += -I$(JUCE_CORE_DIR) -I./ -DJUCE_APP_CONFIG_HEADER=\"AppConfig.h\"
-LIBS += -ldl -lrt
-LDFLAGS ?= -flto
+LIBS += -ldl
 LDFLAGS += -pthread
+ifeq ($(shell uname -s),Darwin)
+	LDFLAGS += -framework Foundation -framework AppKit
+endif
 
+all: preflight $(PROGRAM)
 
-all: $(PROGRAM)
+$(PROGRAM): $(PROGRAM).o juce_core.o
+	$(CXXLD) -o $@ $(CXXFLAGS) $(LDFLAGS) $^ $(LIBS)
 
-$(PROGRAM): $(SRCS:.cpp=.o)
-	$(CXXLD) -o $@ $(LDFLAGS) $^ $(LIBS)
+$(PROGRAM).o: $(SRCS)
+	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
-%.o: %.cpp
-	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $<
+juce_core.o: $(JUCE_SRCS)
+	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
+
 
 clean:
 	$(RM) -v $(PROGRAM) *.gch *.o $(JUCE_CORE_DIR)/*.o
+
+preflight:
+	@echo OS = $(shell grep -E "^(NAME|VERSION)=" /etc/os-release)
+	make -v
+	@echo CXX = $(CXX)
+	@echo CXXLD = $(CXXLD)
+	$(CXX) -v
+	$(CXXLD) -v
+	@echo CXXFLAGS = $(CXXFLAGS)
+	@echo LDFLAGS = $(LDFLAGS)
+	@echo LIBS = $(LIBS)
 
 check: $(PROGRAM)
 	@# just check if it's able to at least output the usage text
 	./$(PROGRAM) -h
 
-
-.PHONY: all clean check
+.PHONY: all clean preflight check

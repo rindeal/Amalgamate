@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linux:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [1, 2, 3]
+        include:
+          - build: 1
+            os: ubuntu-18.04
+          - build: 2
+            os: ubuntu-20.04
+          - build: 3
+            os: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+      
+    - name: Build
+      run: make
+      
+    - name: Check
+      run: make check
+
+  macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [1, 2, 3]
+        include:
+          - build: 1
+            os: macos-10.15
+          - build: 2
+            os: macos-11
+          - build: 3
+            os: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+      
+    - name: Build
+      run: make
+      
+    - name: Check
+      run: make check
+    
