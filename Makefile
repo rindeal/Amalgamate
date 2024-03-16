@@ -1,12 +1,12 @@
 PROGRAM = amalgamate
+SRCS := Amalgamate.cpp
 
 JUCE_CORE_DIR := 3rd/JUCE/modules/juce_core
-SRCS := Amalgamate.cpp
-JUCE_SRCS :=
+JUCE_CORE_SRCS :=
 ifeq ($(shell uname -s),Darwin)
-	JUCE_SRCS += $(JUCE_CORE_DIR)/juce_core.mm
+	JUCE_CORE_SRCS += $(JUCE_CORE_DIR)/juce_core.mm
 else
-	JUCE_SRCS += $(JUCE_CORE_DIR)/juce_core.cpp
+	JUCE_CORE_SRCS += $(JUCE_CORE_DIR)/juce_core.cpp
 endif
 
 CXXLD ?= $(CXX)
@@ -20,6 +20,7 @@ ifeq ($(shell uname -s),Darwin)
 	LDFLAGS += -framework Foundation -framework AppKit
 endif
 
+
 all: preflight $(PROGRAM)
 
 $(PROGRAM): $(PROGRAM).o juce_core.o
@@ -28,7 +29,7 @@ $(PROGRAM): $(PROGRAM).o juce_core.o
 $(PROGRAM).o: $(SRCS)
 	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
-juce_core.o: $(JUCE_SRCS)
+juce_core.o: $(JUCE_CORE_SRCS)
 	$(CXX) -c -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
@@ -58,5 +59,6 @@ preflight: $(_preflight_os)
 check: $(PROGRAM)
 	@# just check if it's able to at least output the usage text
 	./$(PROGRAM) -h
+
 
 .PHONY: all clean check preflight _preflight-linux _preflight-macos
