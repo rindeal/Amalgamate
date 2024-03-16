@@ -1,8 +1,7 @@
 # Amalgamate
 [![Build Status](https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml/badge.svg)](https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml)
 
-A cross platform command line tool for producing an amalgamation of
-C or C++ sources.
+A cross platform CLI tool for producing an amalgamation of C/C++ sources.
 
 ## What is an amalgamation?
 
@@ -18,18 +17,52 @@ amalgmation is added as an additional source file to an existing project
 rather than needing to be built separately by build tools. Here are some
 examples of source code libraries that have been amalgamated:
 
-- **[FreeType][1]** http://github.com/vinniefalco/FreeTypeAmalgam
-- **[JUCE][2]** http://github.com/vinniefalco/JUCEAmalgam
-- **[TagLib][3]** http://github.com/vinniefalco/TagLibAmalgam
+Best known real-world example is the [SQLite project][SQLite], which uses amalgamation
+to concatenate over 130 source files into a single `sqlite3.c` file, making it
+trivial for their downstream users to incorporate the library into their projects.
 
 ## How to build
 
-On linux simply running `make all` should be sufficient to build the program.
+<details>
+  <summary><b>Click here</b> to show/hide section</summary>
+  <br >
+  
+Clone this repository including submodules (snapshot archives or simple clones are not enough).
 
-On windows you should use the `build.bat` script which requires the MSVC command line toolchain to be enabled. You can read about how to enable it [here](https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=vs-2019).
+```sh
+git clone --depth=1 --recurse-submodules --shallow-submodules https://github.com/rindeal/Amalgamate.git
+cd Amalgamate
+```
+
+#### Linux or MacOS
+
+Requirements:
+- `c++`
+- `make`
+
+Build commands:
+```sh
+make
+```
+
+#### Windows
+
+Requirements:
+- [MSVC][MSVC]
+
+Build commands:
+```sh
+./build.bat
+```
+
+</details>
 
 ## Usage
 
+<details>
+  <summary><b>Click here</b> to show/hide section</summary>
+  <br >
+  
 ```plain
   NAME
 
@@ -86,14 +119,17 @@ On windows you should use the `build.bat` script which requires the MSVC command
     -v                Verbose output mode
 ```
 
+</details>
+
 ## License
 
-Copyright (C) 2012 [Vinnie Falco][4]<br>
-Amalgamate is provided under the terms of the [MIT license][5].<br>
-Amalgamate uses portions of [JUCE][2], licensed separately.
+Copyright (C)  2012       _[Vinnie Falco][Vinnie-Falco]_<br>
+Copyright (C)  2016-2022  _Jan Chren_<br>
+Amalgamate is provided under the terms of the [MIT license][MIT].<br>
+Amalgamate uses portions of [JUCE][JUCE], licensed separately.
 
-[1]: http://www.freetype.org "The FreeType Project"
-[2]: http://rawmaterialsoftware.com/juce.php "JUCE"
-[3]: http://developer.kde.org/~wheeler/taglib.html "TagLib"
-[4]: http://vinniefalco.com "Vinnie Falco's Home Page"
-[5]: http://www.opensource.org/licenses/MIT "MIT License"
+[SQLite]: https://sqlite.org/amalgamation.html "The SQLite Amalgamation"
+[MSVC]: https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170 "How to use the Microsoft C++ toolset from the command line"
+[JUCE]: http://rawmaterialsoftware.com/juce.php "JUCE"
+[Vinnie-Falco]: http://vinniefalco.com "Vinnie Falco's Home Page"
+[MIT]: http://www.opensource.org/licenses/MIT "MIT License"
