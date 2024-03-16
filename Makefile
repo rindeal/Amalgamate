@@ -1,3 +1,5 @@
+DEBUG ?= 0
+
 PROGRAM = amalgamate
 SRCS := Amalgamate.cpp
 
@@ -14,6 +16,9 @@ CXXFLAGS ?= -O2
 CXXFLAGS += -std=c++14 -pthread
 CXXFLAGS += -Wall
 CXXFLAGS += -I$(JUCE_CORE_DIR) -I./ -DJUCE_APP_CONFIG_HEADER=\"AppConfig.h\"
+ifeq ($(DEBUG), 1)
+	CXXFLAGS += -DDEBUG=1 -DJUCE_DEBUG=1
+endif
 LIBS += -ldl
 LDFLAGS += -pthread
 ifeq ($(shell uname -s),Darwin)

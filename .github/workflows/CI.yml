@@ -27,7 +27,7 @@ jobs:
           submodules: 'true'
       
       - name: Build
-        run: make
+        run: make DEBUG=1
       
       - name: Check
         run: make check
@@ -55,7 +55,7 @@ jobs:
           submodules: 'true'
       
       - name: Build
-        run: make
+        run: make DEBUG=1
       
       - name: Check
         run: make check
