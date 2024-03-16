@@ -1,5 +1,7 @@
 @echo off
 
+systeminfo
+
 cl ^
   /EHsc /nologo ^
   /I3rd\JUCE\modules\juce_core /I.\ ^
