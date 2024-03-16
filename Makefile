@@ -19,6 +19,7 @@ LDFLAGS += -pthread
 ifeq ($(shell uname -s),Darwin)
 	LDFLAGS += -framework Foundation -framework AppKit
 endif
+MV ?= mv
 
 
 all: preflight $(PROGRAM)
@@ -47,7 +48,7 @@ ifeq ($(shell uname -s),Darwin)
 endif
 
 preflight: $(_preflight_os)
-	make -v
+	$(MAKE) -v
 	@echo CXX = $(CXX)
 	@echo CXXLD = $(CXXLD)
 	$(CXX) -v
@@ -57,6 +58,10 @@ preflight: $(_preflight_os)
 	@echo LIBS = $(LIBS)
 
 check: $(PROGRAM)
+	./$(PROGRAM) -v $(JUCE_CORE_DIR)/juce_core.h juce_core.h
+	$(MV) -v juce_core.h $(JUCE_CORE_DIR)/juce_core.h
+	$(MAKE) clean
+	$(MAKE) $(PROGRAM)
 	@# just check if it's able to at least output the usage text
 	./$(PROGRAM) -h
 
