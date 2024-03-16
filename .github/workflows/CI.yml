@@ -22,7 +22,7 @@ jobs:
             os: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4
       with:
         submodules: 'true'
       
@@ -50,7 +50,7 @@ jobs:
             os: macos-latest
 
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4
       with:
         submodules: 'true'
       
@@ -74,7 +74,7 @@ jobs:
             os: windows-latest
 
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4
       with:
         submodules: 'true'
     - uses: ilammy/msvc-dev-cmd@v1
