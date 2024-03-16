@@ -22,15 +22,15 @@ jobs:
             os: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'true'
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
       
-    - name: Build
-      run: make
+      - name: Build
+        run: make
       
-    - name: Check
-      run: make check
+      - name: Check
+        run: make check
 
   macos:
     runs-on: ${{ matrix.os }}
@@ -50,15 +50,15 @@ jobs:
             os: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'true'
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
       
-    - name: Build
-      run: make
+      - name: Build
+        run: make
       
-    - name: Check
-      run: make check
+      - name: Check
+        run: make check
     
   windows:
     runs-on: ${{ matrix.os }}
@@ -74,13 +74,13 @@ jobs:
             os: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-    - uses: ilammy/msvc-dev-cmd@v1
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+      - uses: ilammy/msvc-dev-cmd@v1
       
-    - name: Build
-      run: ./build.bat
+      - name: Build
+        run: ./build.bat
       
-    - name: Check
-      run: ./amalgamate -h
+      - name: Check
+        run: ./amalgamate -h
