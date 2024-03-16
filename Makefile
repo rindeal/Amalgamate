@@ -35,8 +35,17 @@ juce_core.o: $(JUCE_SRCS)
 clean:
 	$(RM) -v $(PROGRAM) *.gch *.o $(JUCE_CORE_DIR)/*.o
 
-preflight:
-	@echo OS = $(shell grep -E "^(NAME|VERSION)=" /etc/os-release)
+_preflight-linux:
+	cat /etc/os-release
+_preflight-macos:
+	sw_vers
+
+_preflight_os = _preflight-linux
+ifeq ($(shell uname -s),Darwin)
+	_preflight_os = _preflight-macos
+endif
+
+preflight: $(_preflight_os)
 	make -v
 	@echo CXX = $(CXX)
 	@echo CXXLD = $(CXXLD)
@@ -50,4 +59,4 @@ check: $(PROGRAM)
 	@# just check if it's able to at least output the usage text
 	./$(PROGRAM) -h
 
-.PHONY: all clean preflight check
+.PHONY: all clean check preflight _preflight-linux _preflight-macos
