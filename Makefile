@@ -78,7 +78,7 @@ check: $(PROGRAM)
 _git-tag-set-check:
 	@test -n "$(GIT_TAG)" || (echo "Error: Variable 'GIT_TAG' not set" >&2; exit 1)
 
-git-tag-delete: _git-tag-set-check
+git-tag-del: _git-tag-set-check
 	-git tag --delete $(GIT_TAG)
 	-git push --delete origin $(GIT_TAG)
 
@@ -101,4 +101,4 @@ gh-upload: $(PROGRAM)
 
 .PHONY: all clean check
 .PHONY: _preflight _preflight-linux _preflight-macos
-.PHONY: _git-tag-set-check git-tag-delete git-tag gh-upload
+.PHONY: _git-tag-set-check git-tag-del git-tag gh-upload
