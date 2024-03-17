@@ -48,7 +48,7 @@ make
 #### Windows
 
 Requirements:
-- [MSVC][MSVC]
+- [MSVC]
 
 Build commands:
 ```sh
@@ -58,6 +58,11 @@ Build commands:
 </details>
 
 ## Usage
+
+```sh
+./amalgamate INPUT.h OUTPUT.h
+./amalgamate -w "include/*.h" OUTPUT.h
+```
 
 <details>
   <summary><b>Click here</b> to show/hide section</summary>
@@ -123,13 +128,14 @@ Build commands:
 
 ## License
 
-Copyright (C)  2012       _[Vinnie Falco][Vinnie-Falco]_<br>
-Copyright (C)  2016-2022  _Jan Chren_<br>
-Amalgamate is provided under the terms of the [MIT license][MIT].<br>
-Amalgamate uses portions of [JUCE][JUCE], licensed separately.
+Copyright (C)  2012       _[Vinnie Falco]_<br>
+Copyright (C)  2016-2024  _Jan Chren_<br>
+Amalgamate is provided under the terms of the [MIT] license.<br>
+Amalgamate embeds `juce_core` module of [JUCE], licensed separately under [ISC] license.
 
 [SQLite]: https://sqlite.org/amalgamation.html "The SQLite Amalgamation"
 [MSVC]: https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170 "How to use the Microsoft C++ toolset from the command line"
-[JUCE]: http://rawmaterialsoftware.com/juce.php "JUCE"
-[Vinnie-Falco]: http://vinniefalco.com "Vinnie Falco's Home Page"
-[MIT]: http://www.opensource.org/licenses/MIT "MIT License"
+[JUCE]: https://rawmaterialsoftware.com/juce.php "JUCE"
+[Vinnie Falco]: https://vinniefalco.com "Vinnie Falco's Home Page"
+[MIT]: https://spdx.org/licenses/MIT.html "MIT License"
+[ISC]: https://spdx.org/licenses/ISC.html "ISC License"
