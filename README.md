@@ -1,5 +1,11 @@
 # Amalgamate
-[![Build Status](https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml/badge.svg)](https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml)
+[![GitHub Actions Continuous Integration Status][GH-actions-CI-build-status-img]][GH-actions-CI-build-status]
+[![a][GH-release-img]][GH-release]
+[![a][GH-release-dl-img]][GH-release]
+
+[GH-actions-CI-build-status-img]: https://img.shields.io/github/actions/workflow/status/rindeal/Amalgamate/CI.yml?branch=master&event=push&style=flat&logo=github&logoColor=white&label=CI&labelColor=%232d2d2d&cacheSeconds=3600
+[GH-release-img]: https://img.shields.io/github/v/release/rindeal/Amalgamate?sort=semver&filter=amalgamate%20v*.*.*&display_name=release&style=flat&logo=github&labelColor=2d2d2d&cacheSeconds=3600
+[GH-release-dl-img]: https://img.shields.io/github/downloads/rindeal/Amalgamate/total?style=flat&logo=github&labelColor=2d2d2d&cacheSeconds=3600
 
 A cross platform CLI tool for producing an amalgamation of C/C++ sources.
 
@@ -23,16 +29,40 @@ trivial for their downstream users to incorporate the library into their project
 
 ## How to build
 
+Prebuilt binaries are available in [:arrow_down: the release page :arrow_down:][GH-release].
+Currently available are following platforms:
+- Linux x86_64
+- MacOS x86_64 / ARM64
+- Windows x86_64
+
+If you want to build it from the source code yourself anyway, see below :point_down::
+
 <details>
   <summary><b>Click here</b> to show/hide section</summary>
-  <br >
-  
-Clone this repository including submodules (snapshot archives or simple clones are not enough).
+  <br>
+
+Download and unpack one of `amalgamate-*-source-code.{zip,tar.gz}` archives from [the latest release][GH-release]
+
+```bash
+#!/bin/bash
+(
+  repo="rindeal/Amalgamate"
+  asset_filter='[^"]*/releases/download/[^"]*source-code.tar.gz'
+  tag=$(basename "$(curl -Lso /dev/null -w "%{url_effective}" https://github.com/${repo}/releases/latest)")
+  hrefrel=$(curl -Ls "https://github.com/${repo}/releases/expanded_assets/${tag}" | grep -oEm1 "${asset_filter}")
+  curl -Lso - "https://github.com${hrefrel}" | tar -xzf -
+)
+cd amalgamate-*-source-code
+```
+
+Or clone this repository including submodules.
 
 ```sh
 git clone --depth=1 --recurse-submodules --shallow-submodules https://github.com/rindeal/Amalgamate.git
 cd Amalgamate
 ```
+
+> NOTE: Snapshot archives or simple clones are not enough.
 
 #### Linux or MacOS
 
@@ -139,3 +169,7 @@ Amalgamate embeds `juce_core` module of [JUCE], licensed separately under [ISC] 
 [Vinnie Falco]: https://vinniefalco.com "Vinnie Falco's Home Page"
 [MIT]: https://spdx.org/licenses/MIT.html "MIT License"
 [ISC]: https://spdx.org/licenses/ISC.html "ISC License"
+[GH-release]: https://github.com/rindeal/Amalgamate/releases/latest "GitHub Releases"
+[GH-actions-CI-build-status]: https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml "GitHub Actions Continuous Integration Status"
+
+[![GitHub Actions Continuous Integration Status](https://github.com/rindeal/Amalgamate/actions/workflows/CI.yml/badge.svg?branch=master&event=push)][GH-actions-CI-build-status]
