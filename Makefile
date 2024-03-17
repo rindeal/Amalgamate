@@ -78,7 +78,7 @@ check: $(PROGRAM)
 _git-tag-set-check:
 	@test -n "$(GIT_TAG)" || (echo "Error: Variable 'GIT_TAG' not set" >&2; exit 1)
 
-git-tag-delete: _git-tag-set-check
+git-tag-del: _git-tag-set-check
 	-git tag --delete $(GIT_TAG)
 	-git push --delete origin $(GIT_TAG)
 
@@ -87,10 +87,11 @@ git-tag: _git-tag-set-check git-tag-delete
 
 gh-upload: $(PROGRAM)
 	@test -n "$(GH_TAG)" || (echo "Error: Variable 'GH_TAG' not set" >&2; exit 1)
+	@test -n "$(REL_TAG)" || (echo "Error: Variable 'REL_TAG' not set" >&2; exit 1)
 	set -ex ;\
 	platform="$$(uname -s | tr '[:upper:]' '[:lower:]')" ;\
 	    arch="$$(uname -m | tr '[:upper:]' '[:lower:]' | sed 's|x86_64|amd64|')" ;\
-	archive_basename="$(PROGRAM)-$(GH_TAG)-$${platform}-$${arch}" ;\
+	archive_basename="$(PROGRAM)-$(REL_TAG)-$${platform}-$${arch}" ;\
 	$(MKDIR) -v                                                            "$${archive_basename}" ;\
 	$(CP)    -v -a $(GH_ASSETS)                                            "$${archive_basename}" ;\
 	$(ZIP) -r                                  "$${archive_basename}.zip"  "$${archive_basename}" ;\
@@ -100,4 +101,4 @@ gh-upload: $(PROGRAM)
 
 .PHONY: all clean check
 .PHONY: _preflight _preflight-linux _preflight-macos
-.PHONY: _git-tag-set-check git-tag-delete git-tag gh-upload
+.PHONY: _git-tag-set-check git-tag-del git-tag gh-upload
