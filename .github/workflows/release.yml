@@ -80,7 +80,9 @@ jobs:
   finish:
     needs: [ linux_macos, windows, source ]
     runs-on: ubuntu-latest
-    env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - run: |
           set -e
@@ -91,4 +93,4 @@ jobs:
           echo "**bar** _baz_" >> notes.md
           echo >> notes.md
           cat autogen-notes.md >> notes.md
-          gh release edit --draft=false --notes-file notes.md --repo=${{ github.repository }} "${{ github.sha }}"
+          gh release edit --draft=false --notes-file notes.md "${{ github.sha }}"
