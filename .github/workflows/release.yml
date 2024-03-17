@@ -108,6 +108,6 @@ jobs:
       - name: "Relnotes: checksum section"
         run: |
           wget "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/.github/relnotes-checksum-md.sh"
-          . "relnotes-checksum-md.sh"
+          . "relnotes-checksum-md.sh" >> "${RELNOTES_PATH}"
       - name: "Finish release"
         run: gh release edit --draft=false --notes-file "${RELNOTES_PATH}" "${{ github.ref_name }}"

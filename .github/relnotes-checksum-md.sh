@@ -2,6 +2,8 @@
 
 set -evx
 
+test -n "${CHECKSUM_PATH}"
+
 echo "<details>"
 echo "<summary>"
 echo "<h2>Checksums</h2>"
