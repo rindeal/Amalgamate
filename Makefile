@@ -91,7 +91,7 @@ gh-upload: $(PROGRAM)
 	set -ex ;\
 	platform="$$(uname -s | tr '[:upper:]' '[:lower:]')" ;\
 	    arch="$$(uname -m | tr '[:upper:]' '[:lower:]' | sed 's|x86_64|amd64|')" ;\
-	archive_basename="$(PROGRAM)-$(REL_TAG)-$${platform}-$${arch}" ;\
+	archive_basename="$(ASSET_BASENAME)-$${platform}-$${arch}" ;\
 	$(MKDIR) -v                                                            "$${archive_basename}" ;\
 	$(CP)    -v -a $(GH_ASSETS)                                            "$${archive_basename}" ;\
 	$(ZIP) -r                                  "$${archive_basename}.zip"  "$${archive_basename}" ;\
@@ -101,4 +101,5 @@ gh-upload: $(PROGRAM)
 
 .PHONY: all clean check
 .PHONY: _preflight _preflight-linux _preflight-macos
-.PHONY: _git-tag-set-check git-tag-del git-tag gh-upload
+.PHONY: _git-tag-set-check git-tag-del git-tag
+.PHONY: gh-upload

@@ -10,7 +10,7 @@ on:
 
 env:
   GH_TAG: ${{ github.ref_name }}
-  REL_TAG: ${{ github.ref_name }}
+  ASSET_BASENAME: "amalgamate-${{ github.ref_name }}"
 
 jobs:
   draft:
@@ -22,7 +22,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: >
           gh release create "${GH_TAG}"
-          --title "amalgamate ${REL_TAG}"
+          --title "amalgamate ${GH_TAG}"
           --draft
           --generate-notes
           --verify-tag
@@ -30,19 +30,19 @@ jobs:
   source_code:
     needs: [ draft ]
     runs-on: ubuntu-latest
+    env:
+      WORK_DIR: ${{ github.workspace }}
+      REPO_DIR: ${{ github.workspace }}/repo
     steps:
       - uses: actions/checkout@v4
-        with: { submodules: true }
-
-      - name: Initialize environment
-        run: echo archives= "amalgamate-${{ github.ref_name }}-source-code."{zip,tar.gz} >> "${GITHUB_ENV}"
+        with: { submodules: true, path: "repo" }
 
       - name: Create assets
-        run: printf "%s\n" ${archives} | xargs --verbose --max-args=1 pipx run git-archive-all --verbose | grep -v /3rd/
+        run: bash .github/source-code.sh pack
 
       - name: Upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release upload --clobber "${GH_TAG}" ${archives}
+        run: bash .github/source-code.sh upload
 
   linux_n_macos:
     needs: [ draft ]
@@ -68,17 +68,17 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       
       - name: Initialize environment
-        run: Add-Content "${env:GITHUB_ENV}" "archive=amalgamate-${env:REL_TAG}-windows-amd64.zip"
+        run: Add-Content "${GITHUB_ENV}" "ARCHIVE_PATH=${ASSET_BASENAME}-windows-amd64.zip"
 
       - name: Build
         run: ./build.bat
 
       - name: Create assets
-        run: Compress-Archive -verbose -Path "amalgamate.exe", "README.md", "LICENSE" -DestinationPath "${env:archive}"
+        run: Compress-Archive -verbose -Path "amalgamate.exe", "README.md", "LICENSE" -DestinationPath "${ARCHIVE_PATH}"
 
       - name: Upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release upload --clobber "${env:GH_TAG}" "${env:archive}"
+        run: gh release upload --clobber "${GH_TAG}" "${ARCHIVE_PATH}"
   
   finish:
     needs: [ source_code, linux_n_macos, windows ]
@@ -86,10 +86,10 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      AUTOGEN_RELNOTES_PATH: "${{github.workspace}}/autogen-release-notes.md"
-      RELNOTES_PATH: "${{github.workspace}}/relnotes.md"
-      ASSETS_DIR_PATH: "${{github.workspace}}/assets"
-      CHECKSUM_PATH: "${{github.workspace}}/sha256sum.txt"
+      AUTOGEN_RELNOTES_PATH: "${{ github.workspace }}/autogen-release-notes.md"
+      RELNOTES_PATH: "${{ github.workspace }}/relnotes.md"
+      ASSETS_DIR_PATH: "${{ github.workspace }}/assets"
+      CHECKSUM_PATH: "${{ github.workspace }}/${{env.ASSET_BASENAME}}-sha256sum.txt"
     steps:
       - name: "Download automatically generated release notes"
         run: gh release view --json body --jq .body "${GH_TAG}" > "${AUTOGEN_RELNOTES_PATH}"
