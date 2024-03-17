@@ -82,12 +82,12 @@ jobs:
     env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
     steps:
       - run: |
-        set -e
-        gh release view --json body --jq .body "${{ github.sha }}" > autogen-notes.md
-        sed -i -e "s|${{ github.sha }}|${{ github.ref_name }}|g" -- autogen-notes.md
-        echo "#Foo" >> notes.md
-        echo >> notes.md
-        echo "**bar** _baz_" >> notes.md
-        echo >> notes.md
-        cat autogen-notes.md >> notes.md
-        gh release edit --draft=false --notes-file notes.md --repo=${{ github.repository }} "${{ github.sha }}"
+          set -e
+          gh release view --json body --jq .body "${{ github.sha }}" > autogen-notes.md
+          sed -i -e "s|${{ github.sha }}|${{ github.ref_name }}|g" -- autogen-notes.md
+          echo "#Foo" >> notes.md
+          echo >> notes.md
+          echo "**bar** _baz_" >> notes.md
+          echo >> notes.md
+          cat autogen-notes.md >> notes.md
+          gh release edit --draft=false --notes-file notes.md --repo=${{ github.repository }} "${{ github.sha }}"
