@@ -83,13 +83,56 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
+      AUTOGEN_RELNOTES_PATH: "${{github.workspace}}/autogen-release-notes.md"
+      RELNOTES_PATH: "${{github.workspace}}/relnotes.md"
+      ASSETS_DIR_PATH: "${{github.workspace}}/assets"
+      CHECKSUM_PATH: "${{github.workspace}}/sha256sum.txt"
     steps:
-      - run: |
-          set -e
-          gh release view --json body --jq .body "${{ github.ref_name }}" > autogen-notes.md
-          echo "#Foo" >> notes.md
-          echo >> notes.md
-          echo "**bar** _baz_" >> notes.md
-          echo >> notes.md
-          cat autogen-notes.md >> notes.md
-          gh release edit --draft=false --notes-file notes.md "${{ github.ref_name }}"
+      - name: Download automatically generated release notes
+        run: gh release view --json body --jq .body "${{ github.ref_name }}" > "${AUTOGEN_RELNOTES_PATH}"
+      - name: Download assets
+        run: gh release download --dir "${ASSETS_DIR_PATH}" "${{ github.ref_name }}"
+      - name: Generate checksum file
+        run: |
+          set -ex
+          cd "${ASSETS_DIR_PATH}"
+          sha256sum * > "${CHECKSUM_PATH}"
+      - name: Upload checksum file
+        run: gh release upload --clobber "${{ github.ref_name }}" "${CHECKSUM_PATH}"
+      - name: "Relnotes: init"
+        run: |
+          set -ex
+          br(){ echo "" >> "${RELNOTES_PATH}";}
+          echo "# Foo" >> "${RELNOTES_PATH}"
+          br
+          echo "**bar** _baz_" >> "${RELNOTES_PATH}"
+          br
+      - name: "Relnotes: checksum section"
+        run: |
+          set -ex
+          br(){ echo "" >> "${RELNOTES_PATH}";}
+          echo "<details>" >> "${RELNOTES_PATH}"
+          echo "<summary>" >> "${RELNOTES_PATH}"
+          echo "<b>Checksums</b> <sub><sup>(click here to toggle section visibility)</sup></sub>" >> "${RELNOTES_PATH}"
+          echo "</summary>" >> "${RELNOTES_PATH}"
+          br
+          echo "Verify donwloaded files using this command:" >> "${RELNOTES_PATH}"
+          echo '```sh' >> "${RELNOTES_PATH}"
+          echo 'sha256sum --check --ignore-missing '"$(basename "${CHECKSUM_PATH}")" >> "${RELNOTES_PATH}"
+          echo '```' >> "${RELNOTES_PATH}"
+          br
+          echo "Or directly using a checksum value from the table below like this:" >> "${RELNOTES_PATH}"
+          echo '```sh' >> "${RELNOTES_PATH}"
+          echo 'echo $HASH $FILE | sha256sum --check -' >> "${RELNOTES_PATH}"
+          echo '```' >> "${RELNOTES_PATH}"
+          br
+          echo "File | SHA-256" >> "${RELNOTES_PATH}"
+          echo "--- | ---" >> "${RELNOTES_PATH}"
+          awk '{print $2, "|", $1}' < "${CHECKSUM_PATH}" >> "${RELNOTES_PATH}"
+          br
+          echo "</details>" >> "${RELNOTES_PATH}"
+          br
+      - name: "Relnotes: append auto notes"
+        run: cat "${AUTOGEN_RELNOTES_PATH}" >> "${RELNOTES_PATH}"
+      - name: Finish release
+        run: gh release edit --draft=false --notes-file "${RELNOTES_PATH}" "${{ github.ref_name }}"
