@@ -18,11 +18,11 @@ jobs:
       - name: Create draft release
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: >
-          gh release create "${{ github.sha }}"
+          gh release create "${{ github.ref_name }}"
           --title "amalgamate ${{ github.ref_name }}"
           --draft
           --generate-notes
-          --notes-start-tag 0.4.0
+          --verify-tag
 
   source:
     needs: [ draft ]
@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release upload --clobber "${{ github.sha }}" ${archives}
+        run: gh release upload --clobber "${{ github.ref_name }}" ${archives}
 
   linux_macos:
     needs: [ draft ]
@@ -54,7 +54,7 @@ jobs:
 
       - name: Create and upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: make gh-upload REL_VER="${{ github.ref_name }}" GH_TAG="${{ github.sha }}"
+        run: make gh-upload REL_VER="${{ github.ref_name }}" GH_TAG="${{ github.ref_name }}"
 
   windows:
     needs: [ draft ]
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release upload --clobber "${{ github.sha }}" "${env:archive}"
+        run: gh release upload --clobber "${{ github.ref_name }}" "${env:archive}"
   
   finish:
     needs: [ linux_macos, windows, source ]
@@ -95,5 +95,4 @@ jobs:
           echo "**bar** _baz_" >> notes.md
           echo >> notes.md
           cat autogen-notes.md >> notes.md
-          gh release edit --draft=false --notes-file notes.md "temptag-${{ github.run_id }}"
-          git push --delete origin "temptag-${{ github.run_id }}"
+          gh release edit --draft=false --notes-file notes.md "${{ github.ref_name }}"
