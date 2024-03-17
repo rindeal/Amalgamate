@@ -87,11 +87,11 @@ git-tag: _git-tag-set-check git-tag-delete
 
 gh-upload: $(PROGRAM)
 	@test -n "$(GH_TAG)" || (echo "Error: Variable 'GH_TAG' not set" >&2; exit 1)
-	@test -n "$(REL_VER)" || (echo "Error: Variable 'REL_VER' not set" >&2; exit 1)
+	@test -n "$(REL_TAG)" || (echo "Error: Variable 'REL_TAG' not set" >&2; exit 1)
 	set -ex ;\
 	platform="$$(uname -s | tr '[:upper:]' '[:lower:]')" ;\
 	    arch="$$(uname -m | tr '[:upper:]' '[:lower:]' | sed 's|x86_64|amd64|')" ;\
-	archive_basename="$(PROGRAM)-$(REL_VER)-$${platform}-$${arch}" ;\
+	archive_basename="$(PROGRAM)-$(REL_TAG)-$${platform}-$${arch}" ;\
 	$(MKDIR) -v                                                            "$${archive_basename}" ;\
 	$(CP)    -v -a $(GH_ASSETS)                                            "$${archive_basename}" ;\
 	$(ZIP) -r                                  "$${archive_basename}.zip"  "$${archive_basename}" ;\
