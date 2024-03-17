@@ -19,9 +19,9 @@ jobs:
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: >
           gh release create "${{ github.ref_name }}"
-            --draft
-            --generate-notes
-            --verify-tag
+          --draft
+          --generate-notes
+          --verify-tag
 
   source:
     needs: [ draft ]
