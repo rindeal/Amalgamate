@@ -82,7 +82,7 @@ git-tag-del: _git-tag-set-check
 	-git tag --delete $(GIT_TAG)
 	-git push --delete origin $(GIT_TAG)
 
-git-tag: _git-tag-set-check git-tag-delete
+git-tag: _git-tag-set-check git-tag-del
 	git tag $(GIT_TAG) && git push --tags
 
 gh-upload: $(PROGRAM)
