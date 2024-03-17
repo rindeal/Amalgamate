@@ -84,6 +84,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
     steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
       - run: |
           set -e
           gh release view --json body --jq .body "${{ github.sha }}" > autogen-notes.md
@@ -93,4 +95,5 @@ jobs:
           echo "**bar** _baz_" >> notes.md
           echo >> notes.md
           cat autogen-notes.md >> notes.md
-          gh release edit --draft=false --notes-file notes.md "${{ github.sha }}"
+          gh release edit --draft=false --notes-file notes.md "temptag-${{ github.run_id }}"
+          git push --delete origin "temptag-${{ github.run_id }}"
