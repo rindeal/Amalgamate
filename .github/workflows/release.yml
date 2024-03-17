@@ -22,6 +22,7 @@ jobs:
           --title "amalgamate ${{ github.ref_name }}"
           --draft
           --generate-notes
+          --notes-start-tag 0.4.0
 
   source:
     needs: [ draft ]

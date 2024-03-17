@@ -95,7 +95,7 @@ gh-upload: $(PROGRAM)
 	$(MKDIR) -v                                                            "$${archive_basename}" ;\
 	$(CP)    -v -a $(GH_ASSETS)                                            "$${archive_basename}" ;\
 	$(ZIP) -r                                  "$${archive_basename}.zip"  "$${archive_basename}" ;\
-	$(GH) release upload --clobber "$(GH_SHA)" "$${archive_basename}.zip" ;\
+	$(GH) release upload --clobber "$(GH_TAG)" "$${archive_basename}.zip" ;\
 	set +ex
 
 
