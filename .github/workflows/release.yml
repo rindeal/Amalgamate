@@ -19,6 +19,8 @@ jobs:
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: >
           gh release create "${{ github.ref_name }}"
+          --title "amalgamate ${{ github.ref_name }}"
+          --notes "$(printf "foo\n**bar**\n")"
           --draft
           --generate-notes
           --verify-tag
@@ -74,7 +76,7 @@ jobs:
 
       - name: Upload assets
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release upload --clobber "${{ github.ref_name }}" "${env:archive}#Test label"
+        run: gh release upload --clobber "${{ github.ref_name }}" "${env:archive}"
   
   finish:
     needs: [ linux_macos, windows, source ]
