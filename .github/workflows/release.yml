@@ -82,4 +82,4 @@ jobs:
     steps:
       - name: Finish release
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: gh release edit --draft=false --repository=${{ github.repository }} "${{ github.ref_name }}"
+        run: gh release edit --draft=false --repo=${{ github.repository }} "${{ github.ref_name }}"
