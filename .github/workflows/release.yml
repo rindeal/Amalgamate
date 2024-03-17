@@ -84,12 +84,9 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@v4
-        with: { submodules: true }
       - run: |
           set -e
-          gh release view --json body --jq .body "${{ github.sha }}" > autogen-notes.md
-          sed -i -e "s|${{ github.sha }}|${{ github.ref_name }}|g" -- autogen-notes.md
+          gh release view --json body --jq .body "${{ github.ref_name }}" > autogen-notes.md
           echo "#Foo" >> notes.md
           echo >> notes.md
           echo "**bar** _baz_" >> notes.md
