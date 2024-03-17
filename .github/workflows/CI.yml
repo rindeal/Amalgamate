@@ -7,47 +7,14 @@ on:
     branches: [ master ]
 
 jobs:
-  linux:
-
+  linux_macos:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [ ubuntu-20.04, ubuntu-22.04, ubuntu-latest ]
-        include:
-          - build: ubuntu-20.04
-            os: ubuntu-20.04
-          - build: ubuntu-22.04
-            os: ubuntu-22.04
-          - build: ubuntu-latest
-            os: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-      
-      - name: Build
-        run: make DEBUG=1
-      
-      - name: Check
-        run: make check
-
-  macos:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        build: [ macos-11, macos-12, macos-13, macos-14, macos-latest ]
-        include:
-          - build: macos-11
-            os: macos-11
-          - build: macos-12
-            os: macos-12
-          - build: macos-13
-            os: macos-13
-          - build: macos-14
-            os: macos-14
-          - build: macos-latest
-            os: macos-latest
+        os: [
+          ubuntu-20.04, ubuntu-22.04, ubuntu-latest,
+          macos-11, macos-12, macos-13, macos-14, macos-latest,
+        ]
 
     steps:
       - uses: actions/checkout@v4
@@ -64,14 +31,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [ windows-2019, windows-2022, windows-latest ]
-        include:
-          - build: windows-2019
-            os: windows-2019
-          - build: windows-2022
-            os: windows-2022
-          - build: windows-latest
-            os: windows-latest
+        os: [ windows-2019, windows-2022, windows-latest ]
 
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,83 @@
+name: Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+    - 'v*.*.*'
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+
+      - name: Create draft release
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: gh release create "${{ github.ref_name }}" --title "amalgamate ${{ github.ref_name }}" --draft
+
+  source:
+    needs: [ draft ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+
+      - name: Initialize environment
+        run: echo archives= "amalgamate-${{ github.ref_name }}-source-code."{zip,tar.gz} >> "${GITHUB_ENV}"
+
+      - name: Create assets
+        run: printf "%s\n" ${archives} | xargs --verbose --max-args=1 pipx run git-archive-all --verbose | grep -v /3rd/
+
+      - name: Upload assets
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: gh release upload --clobber "${{ github.ref_name }}" ${archives}
+
+  linux_macos:
+    needs: [ draft ]
+    strategy: { matrix: { os: [ ubuntu-latest, macos-13, macos-14 ] } }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      
+      - name: Build
+        run: make
+
+      - name: Create and upload assets
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: make GH_TAG="${{ github.ref_name }}" gh-upload
+
+  windows:
+    needs: [ draft ]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      - uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Initialize environment
+        run: Add-Content "${env:GITHUB_ENV}" "archive=amalgamate-${{ github.ref_name }}-windows-amd64.zip"
+
+      - name: Build
+        run: ./build.bat
+
+      - name: Create assets
+        run: Compress-Archive -verbose -Path "amalgamate.exe", "README.md", "LICENSE" -DestinationPath "${env:archive}"
+
+      - name: Upload assets
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: gh release upload --clobber "${{ github.ref_name }}" "${env:archive}"
+  
+  finish:
+    needs: [ linux_macos, windows, source ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finish release
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "${{ github.ref_name }}" --draft=false

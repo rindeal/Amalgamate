@@ -1,2 +1,5 @@
 amalgamate
+amalgamate.exe
 *.o
+*.zip
+*.tar.*
