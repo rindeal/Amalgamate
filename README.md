@@ -51,7 +51,7 @@ Download and unpack one of `*-source-code.{zip,tar.gz}` archives from [the lates
   asset_filter='[^"]*-source-code.tar.gz'
   tag=$(basename "$(curl -Lso /dev/null -w "%{url_effective}" https://github.com/${repo}/releases/latest)")
   hrefrel=$(curl -Ls "https://github.com/${repo}/releases/expanded_assets/${tag}" | grep -oEm1 '[^"]*/releases/download/'"${asset_filter}")
-  curl -Lso - "https://github.com${hrefrel}" | tar -xzf -
+  curl -Lo - "https://github.com${hrefrel}" | tar -xzf -
 )
 cd amalgamate-*-source-code
 ```
