@@ -30,26 +30,27 @@ trivial for their downstream users to incorporate the library into their project
 ## How to build
 
 Prebuilt binaries are available in [:arrow_down: the release page :arrow_down:][GH-release].
-Currently available are following platforms:
+Currently for following platforms:
 - Linux x86_64
 - MacOS x86_64 / ARM64
 - Windows x86_64
 
-If you want to build it from the source code yourself anyway, see below :point_down::
+If you want to build it from the source code, see below :point_down::
 
 <details>
   <summary><b>Click here</b> to show/hide section</summary>
   <br>
 
-Download and unpack one of `amalgamate-*-source-code.{zip,tar.gz}` archives from [the latest release][GH-release]
+Download and unpack one of `*-source-code.{zip,tar.gz}` archives from [the latest release][GH-release].
+<br> You can use the following snippet to do that automatically:
 
 ```bash
 #!/bin/bash
 (
   repo="rindeal/Amalgamate"
-  asset_filter='[^"]*/releases/download/[^"]*source-code.tar.gz'
+  asset_filter='[^"]*-source-code.tar.gz'
   tag=$(basename "$(curl -Lso /dev/null -w "%{url_effective}" https://github.com/${repo}/releases/latest)")
-  hrefrel=$(curl -Ls "https://github.com/${repo}/releases/expanded_assets/${tag}" | grep -oEm1 "${asset_filter}")
+  hrefrel=$(curl -Ls "https://github.com/${repo}/releases/expanded_assets/${tag}" | grep -oEm1 '[^"]*/releases/download/'"${asset_filter}")
   curl -Lso - "https://github.com${hrefrel}" | tar -xzf -
 )
 cd amalgamate-*-source-code
@@ -78,7 +79,7 @@ make
 #### Windows
 
 Requirements:
-- [MSVC]
+- `cl.exe` courtesy of [MSVC]
 
 Build commands:
 ```sh
