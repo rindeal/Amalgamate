@@ -26,13 +26,27 @@
   ==============================================================================
 */
 
+#include <memory>
 #include <regex>
 #include <unordered_map>
-#include <memory>
+#include <vector>
 
 #include "juce_core.h"
 
 using namespace juce;
+
+//==============================================================================
+
+const std::vector<String> AUTHORS = {
+    "Copyright (C) 2012 Vinnie Falco",
+    "Copyright (C) 2016-2024 Jan Chren",
+    "Amalgamate is provided under the terms of the MIT license.",
+    "Amalgamate embeds juce_core module of JUCE, licensed separately under ISC license."
+};
+
+const std::vector<String> WWW = {
+    "https://github.com/rindeal/Amalgamate"
+};
 
 //==============================================================================
 
@@ -687,10 +701,10 @@ void print_usage(int, char* argv[]) {
   std::cout << "    {inputFile} {outputFile}\n\n";
   std::cout << "EXAMPLES\n";
   std::cout << "    " << name << " INPUT.h OUTPUT.h\n";
-  std::cout << "    This command will produce an amalgamation of INPUT.h into OUTPUT.h.\n\n";
+  std::cout << "        This command will produce an amalgamation of INPUT.h into OUTPUT.h.\n\n";
   std::cout << "    " << name << " -w \"include/*.h\" OUTPUT.h\n";
-  std::cout << "    This command will match files with .h extension in the include directory\n";
-  std::cout << "    and produce an amalgamation into OUTPUT.h.\n\n";
+  std::cout << "        This command will match files with .h extension in the include\n";
+  std::cout << "        directory and produce an amalgamation into OUTPUT.h.\n\n";
   std::cout << "DESCRIPTION\n";
   std::cout << "    Produces an amalgamation of {inputFile} by replacing #include statements\n";
   std::cout << "    with the contents of the file they refer to. This replacement will only\n";
@@ -722,12 +736,15 @@ void print_usage(int, char* argv[]) {
   std::cout << "    -h                Print help and exit.\n\n";
   std::cout << "    -v                Verbose output mode.\n\n";
   std::cout << "AUTHORS\n";
-  std::cout << "    Copyright (C) 2012 Vinnie Falco\n";
-  std::cout << "    Copyright (C) 2016-2024 Jan Chren\n";
-  std::cout << "    Amalgamate is provided under the terms of the MIT license.\n";
-  std::cout << "    Amalgamate embeds juce_core module of JUCE, licensed separately under ISC license.\n\n";
+  for (const auto& line : AUTHORS) {
+    std::cout << "    " << line << "\n";
+  }
+  std::cout << "\n";
   std::cout << "WWW\n";
-  std::cout << "    https://github.com/rindeal/Amalgamate\n\n";
+  for (const auto& line : WWW) {
+    std::cout << "    " << line << "\n";
+  }
+  std::cout << "\n";
 }
 
 int main (int argc, char* argv[])
