@@ -27,6 +27,8 @@ Best known real-world example is the [SQLite project][SQLite], which uses amalga
 to concatenate over 130 source files into a single `sqlite3.c` file, making it
 trivial for their downstream users to incorporate the library into their projects.
 
+Mozilla also uses amalgmation in the so called ["Unified Builds"](https://firefox-source-docs.mozilla.org/build/buildsystem/unified-builds.html)
+
 ## How to build
 
 Prebuilt binaries are available in [:arrow_down: the release page :arrow_down:][GH-release].
@@ -91,8 +93,8 @@ Build commands:
 ## Usage
 
 ```sh
-./amalgamate INPUT.h OUTPUT.h
-./amalgamate -w "include/*.h" OUTPUT.h
+amalgamate INPUT.h OUTPUT.h
+amalgamate -w "include/*.h" OUTPUT.h
 ```
 
 <details>
