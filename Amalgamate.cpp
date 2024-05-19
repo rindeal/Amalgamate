@@ -277,32 +277,30 @@ public:
   }
 
 public:
-  static int64 calculateStreamHashCode (InputStream& in)
+  static uint64 calculateStreamHashCode(juce::InputStream& in)
   {
-    int64 t = 0;
+      const uint64_t FNV_prime = 1099511628211u;
+      uint64_t hash = 14695981039346656037u;
 
-    const int bufferSize = 4096;
-    HeapBlock <uint8> buffer;
-    buffer.malloc (bufferSize);
+      const int bufferSize = 4096;
+      char buffer[bufferSize];
 
-    for (;;)
-    {
-      const int num = in.read (buffer, bufferSize);
+      while (int bytesRead = in.read(buffer, bufferSize))
+      {
+          for (int i = 0; i < bytesRead; ++i)
+          {
+              hash ^= static_cast<unsigned char>(buffer[i]);
+              hash *= FNV_prime;
+          }
+      }
 
-      if (num <= 0)
-        break;
-
-      for (int i = 0; i < num; ++i)
-        t = t * 65599 + buffer[i];
-    }
-
-    return t;
+      return hash;
   }
 
-  static int64 calculateFileHashCode (const File& file)
+  static uint64 calculateFileHashCode (const File& file)
   {
     std::unique_ptr <FileInputStream> stream (file.createInputStream());
-    return stream != 0 ? calculateStreamHashCode (*stream) : 0;
+    return stream != NULL ? calculateStreamHashCode (*stream) : 0;
   }
 
 private:
