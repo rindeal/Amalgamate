@@ -20,16 +20,16 @@ test "${cmd}" = "${cmd_pack}" || test "${cmd}" = "${cmd_upload}"
 
 cd "${WORK_DIR}"
 
-for arch in "${archives[@]}"
+for archive in "${archives[@]}"
     case "${cmd}" in
 
         "${cmd_pack}" )
-            pipx run git-archive-all --verbose -C "${REPO_DIR}" "${arch}" | grep -v "/3rd/"
+            pipx run git-archive-all --verbose -C "${REPO_DIR}" "${archive}" | grep -v "/3rd/"
         ;;
 
         "${cmd_upload}" )
-            label="Source code full (${arch#*.})"
-            gh release upload --clobber "${GH_TAG}" "${arch}#${label}"
+            label="Source code - complete (${archive#*.})"
+            gh release upload --clobber "${GH_TAG}" "${archive}#${label}"
         ;;
 
         * )
