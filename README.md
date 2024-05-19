@@ -100,59 +100,48 @@ Build commands:
   <br >
   
 ```plain
-  NAME
-
-   amalgamate - produce an amalgamation of C/C++ source files.
-
-  SYNOPSIS
-
-   amalgamate [-s]
-     [-w {wildcards}]
-     [-f {file|macro}]...
-     [-p {file|macro}]...
-     [-d {name}={file}]...
-     [-i {dir}]...
-     {inputFile} {outputFile}
-
-  DESCRIPTION
-
-   Produces an amalgamation of {inputFile} by replacing #include statements with
-   the contents of the file they refer to. This replacement will only occur if
-   the file was located in the same directory, or one of the additional include
-   paths added with the -i option.
-
-   Files included in angle brackets (system includes) are only inlined if the
-   -s option is specified.
-
-   If an #include line contains a macro instead of a string literal, the list
-   of definitions provided through the -d option is consulted to convert the
-   macro into a string.
-
-   A file will only be inlined once, with subsequent #include lines for the same
-   file silently ignored, unless the -f option is specified for the file.
-
-  OPTIONS
-
-    -s                Process #include lines containing angle brackets (i.e.
+NAME
+    amalgamate - Produce an amalgamation of C/C++ source files.
+SYNOPSIS
+    amalgamate [-s] [-t] [-w {wildcards}] [-f {file|macro}]...
+    [-p {file|macro}]... [-d {name}={file}]... [-i {dir}]...
+    {inputFile} {outputFile}
+EXAMPLES
+    amalgamate INPUT.h OUTPUT.h
+    This command will produce an amalgamation of INPUT.h into OUTPUT.h.
+    amalgamate -w "include/*.h" OUTPUT.h
+    This command will match files with .h extension in the include directory
+    and produce an amalgamation into OUTPUT.h.
+DESCRIPTION
+    Produces an amalgamation of {inputFile} by replacing #include statements
+    with the contents of the file they refer to. This replacement will only
+    occur if the file was located in the same directory, or one of the
+    additional include paths added with the -i option.
+    Files included in angle brackets (system includes) are only inlined if
+    the -s option is specified.
+    If an #include line contains a macro instead of a string literal, the
+    list of definitions provided through the -d option is consulted to
+    convert the macro into a string.
+    A file will only be inlined once, with subsequent #include lines for the
+    same file silently ignored, unless the -f option is specified for the
+    file.
+OPTIONS
+    -s                Process #include lines containing angle brackets (i.e.,
                       system includes). Normally these are not inlined.
-
-    -w {wildcards}    Specify a comma separated list of file name patterns to
+    -t                Convert spaces into tabs.
+    -w {wildcards}    Specify a comma-separated list of file name patterns to
                       match when deciding to inline (assuming the file can be
-                      located). The default setting is "*.cpp;*.c;*.h;*.mm;*.m".
-
-    -f {file|macro}   Force reinclusion of the specified file or macro on
-                      all appearances in #include lines.
-
+                      located). The default setting is "*.cpp;*.c;*.hpp;*.h".
+    -f {file|macro}   Force reinclusion of the specified file or macro on all
+                      appearances in #include lines.
     -p {file|macro}   Prevent reinclusion of the specified file or macro on
                       subsequent appearances in #include lines.
-
     -d {name}={file}  Use {file} for macro {name} if it appears in an #include
                       line.
-
-    -i {dir}          Additionally look in the specified directory for files when
-                      processing #include lines.
-
-    -v                Verbose output mode
+    -i {dir}          Additionally look in the specified directory for files
+                      when processing #include lines.
+    -h                Print help and exit.
+    -v                Verbose output mode.
 ```
 
 </details>
