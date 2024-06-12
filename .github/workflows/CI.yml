@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ master, dev ]
@@ -7,40 +10,41 @@ on:
     branches: [ master ]
 
 jobs:
-  linux_macos:
+  CI:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [
-          ubuntu-20.04, ubuntu-22.04, ubuntu-latest,
-          macos-11, macos-12, macos-13, macos-14, macos-latest,
+          ubuntu-20.04, ubuntu-22.04, ubuntu-24.04,
+          macos-12, macos-13,  # x86_64
+          macos-14,  # aarch64
+          # windows-2019 uses an outdated pipx for some resone, any other image is up to date
+          windows-2022,
         ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
         with:
           submodules: 'true'
-      
-      - name: Build
-        run: make DEBUG=1
-      
-      - name: Check
-        run: make check
-    
-  windows:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ windows-2019, windows-2022, windows-latest ]
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-      - uses: ilammy/msvc-dev-cmd@v1
+      - run: which pipx && pipx --version
+
+      - name: Install deps
+        run: pipx install meson ninja
+
+      - run: which meson && meson --version
+      - run: which ninja && ninja --version
+      
+      - name: Meson Setup
+        run: meson setup --reconfigure --buildtype=debug -- build
       
       - name: Build
-        run: ./build.bat
-      
-      - name: Check
-        run: ./amalgamate -h
+        run: meson compile -C build --jobs 4 --verbose
+
+      - name: Dump Meson log on failure
+        if: runner.os == 'Windows' && failure()
+        run: cat D:\a\Amalgamate\Amalgamate\build\meson-logs\meson-log.txt
+      - name: Dump Meson log on failure
+        if: runner.os == 'macOS' && failure()
+        run: cat /Users/runner/work/Amalgamate/Amalgamate/build/meson-logs/meson-log.txt
