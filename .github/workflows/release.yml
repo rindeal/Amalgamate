@@ -1,4 +1,5 @@
 # trunk-ignore-all(yamllint/quoted-strings)
+# trunk-ignore-all(checkov/CKV_GHA_7)
 
 name: Release
 
@@ -9,10 +10,16 @@ on:
   push:
     tags:
     - v*.*.*
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: ref_name
+        required: true
+        type: string
 
 env:
-  GH_TAG: ${{ github.ref_name }}
-  ASSET_BASENAME: "amalgamate-${{ github.ref_name }}"
+  GH_TAG: ${{ github.ref_name || inputs.ref_name }}
+  ASSET_BASENAME: "amalgamate-${{ github.ref_name || inputs.ref_name }}"
 
 jobs:
   draft:
@@ -45,23 +52,39 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-  linux_n_macos:
+  binaries:
     needs: [ draft ]
     strategy: { matrix: { os: [ ubuntu-latest, macos-13, macos-latest ] } }
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v4
-        with: { submodules: true }
-      
-      - name: Build
-        run: make
+      - uses: actions/checkout@main
+        with:
+          submodules: true
 
-      - name: Create and upload assets
-        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: make gh-upload
+      - id: setup
+        run: |
+          platform="$(uname -s)"
+          arch="$(uname -m)"
+          echo "basename=${ASSET_BASENAME}-${platform,,}-${arch,,}" >> $GITHUB_OUTPUT
+      - run: pipx  install  -- meson ninja
+      - run: meson setup    --reconfigure --buildtype=release     -- build
+      - run: meson compile  --jobs 4 --verbose                    -C build
+      - run: meson install  --destdir "${BASENAME}"               -C build
+        env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
+      - run: zip -r                               "${BASENAME}.zip" "build/${BASENAME}"
+        env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
+      - run: release upload --clobber "${GH_TAG}" "${BASENAME}.zip"
+        env:
+          BASENAME: "${{ steps.setup.outputs.basename }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
 
   windows:
     needs: [ draft ]
+    if: false
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -82,7 +105,8 @@ jobs:
         run: gh release upload --clobber "${GH_TAG}" "${ARCHIVE_PATH}"
   
   finish:
-    needs: [ source_code, linux_n_macos, windows ]
+    needs: [ source_code, binaries ]
+    if: false
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -90,7 +114,7 @@ jobs:
       AUTOGEN_RELNOTES_PATH: "${{ github.workspace }}/autogen-release-notes.md"
       RELNOTES_PATH: "${{ github.workspace }}/relnotes.md"
       ASSETS_DIR_PATH: "${{ github.workspace }}/assets"
-      CHECKSUM_PATH: "${{ github.workspace }}/${{env.ASSET_BASENAME}}-sha256sum.txt"
+      CHECKSUM_PATH: "${{ github.workspace }}/${ASSET_BASENAME}-sha256sum.txt"
     steps:
       - name: "Download automatically generated release notes"
         run: gh release view --json body --jq .body "${GH_TAG}" > "${AUTOGEN_RELNOTES_PATH}"
