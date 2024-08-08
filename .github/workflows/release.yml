@@ -54,7 +54,10 @@ jobs:
 
   binaries:
     needs: [ draft ]
-    strategy: { matrix: { os: [ ubuntu-latest, macos-13, macos-latest ] } }
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-13, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -65,18 +68,30 @@ jobs:
           submodules: true
 
       - id: setup
+        shell: python
         run: |
-          platform="$(uname -s)"
-          arch="$(uname -m)"
-          echo "basename=${ASSET_BASENAME}-${platform,,}-${arch,,}" >> $GITHUB_OUTPUT
+          from os        import  getenv
+          from platform  import  machine, system
+          from pathlib   import  Path
+          basename = f"{getenv('ASSET_BASENAME')}-{system().lower()}-{machine().lower()}"
+          output_path = Path(getenv('GITHUB_OUTPUT')).write_text(f"basename={basename}\n")
+
       - run: pipx  install  -- meson ninja
       - run: meson setup    --reconfigure --buildtype=release     -- build
       - run: meson compile  --jobs 4 --verbose                    -C build
       - run: meson install  --destdir "${BASENAME}"               -C build
         env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
       - run: zip -r                               "${BASENAME}.zip" "build/${BASENAME}"
+        if: runner.os != 'Windows'
         env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
-      - run: release upload --clobber "${GH_TAG}" "${BASENAME}.zip"
+      - run: |
+          $files = Get-ChildItem -Path "build/$env:BASENAME" -Recurse
+          $files | ForEach-Object { Write-Output $_.FullName }
+          Compress-Archive -Path "build/$env:BASENAME" -DestinationPath "$env:BASENAME.zip" -Force
+        shell: pwsh
+        env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
+        if: runner.os == 'Windows'
+      - run: gh release upload --clobber "${GH_TAG}" "${BASENAME}.zip"
         env:
           BASENAME: "${{ steps.setup.outputs.basename }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
