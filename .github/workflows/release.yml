@@ -1,3 +1,5 @@
+# trunk-ignore-all(yamllint/quoted-strings)
+
 name: Release
 
 permissions:
@@ -6,7 +8,7 @@ permissions:
 on:
   push:
     tags:
-    - 'v*.*.*'
+    - v*.*.*
 
 env:
   GH_TAG: ${{ github.ref_name }}
@@ -30,23 +32,22 @@ jobs:
   source_code:
     needs: [ draft ]
     runs-on: ubuntu-latest
-    env:
-      WORK_DIR: ${{ github.workspace }}
-      REPO_DIR: ${{ github.workspace }}/repo
     steps:
-      - uses: actions/checkout@v4
-        with: { submodules: true, path: "repo" }
+      - uses: actions/checkout@main
+        with:
+          submodules: true
 
       - name: Create assets
-        run: bash .github/source-code.sh pack
+        run: bash .github/source-code.sh  pack
 
       - name: Upload assets
-        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-        run: bash .github/source-code.sh upload
+        run: bash .github/source-code.sh  upload
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   linux_n_macos:
     needs: [ draft ]
-    strategy: { matrix: { os: [ ubuntu-latest, macos-13, macos-14 ] } }
+    strategy: { matrix: { os: [ ubuntu-latest, macos-13, macos-latest ] } }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
