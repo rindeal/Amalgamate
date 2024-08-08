@@ -40,11 +40,11 @@ jobs:
         run: meson setup --reconfigure --buildtype=debug -- build
       
       - name: Build
-        run: meson compile -C build --jobs 4 --verbose
+        run: meson compile --jobs 4 --verbose -C build
 
       - name: Dump Meson log on failure
-        if: runner.os == 'Windows' && failure()
+        if: failure() && runner.os == 'Windows'
         run: cat D:\a\Amalgamate\Amalgamate\build\meson-logs\meson-log.txt
       - name: Dump Meson log on failure
-        if: runner.os == 'macOS' && failure()
+        if: failure() && runner.os == 'macOS'
         run: cat /Users/runner/work/Amalgamate/Amalgamate/build/meson-logs/meson-log.txt
