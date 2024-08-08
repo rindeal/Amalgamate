@@ -1,3 +1,4 @@
+build/
 amalgamate
 amalgamate.exe
 *.o
