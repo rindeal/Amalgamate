@@ -89,6 +89,7 @@ executable(
     objcpp_args : juce_core_cpp_args + executable_cpp_args,
     link_args : executable_link_args,
     dependencies : executable_dependencies,
+    install: true,
 )
 
 # Install man page
