@@ -31,7 +31,7 @@ jobs:
       - run: which pipx && pipx --version
 
       - name: Install deps
-        run: pipx install meson ninja
+        run: pipx install -- meson ninja
 
       - run: which meson && meson --version
       - run: which ninja && ninja --version
