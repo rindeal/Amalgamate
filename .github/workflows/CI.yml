@@ -19,7 +19,7 @@ jobs:
           ubuntu-20.04, ubuntu-22.04, ubuntu-24.04,
           macos-12, macos-13,  # x86_64
           macos-14,  # aarch64
-          # windows-2019 uses an outdated pipx for some resone, any other image is up to date
+          # windows-2019 uses an outdated pipx for some reason, any other image is up to date
           windows-2022,
         ]
 
@@ -43,8 +43,6 @@ jobs:
         run: meson compile --jobs 4 --verbose -C build
 
       - name: Dump Meson log on failure
-        if: failure() && runner.os == 'Windows'
-        run: cat D:\a\Amalgamate\Amalgamate\build\meson-logs\meson-log.txt
-      - name: Dump Meson log on failure
-        if: failure() && runner.os == 'macOS'
-        run: cat /Users/runner/work/Amalgamate/Amalgamate/build/meson-logs/meson-log.txt
+        if: failure()
+        shell: bash
+        run: cat build\meson-logs\meson-log.txt
