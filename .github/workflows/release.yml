@@ -68,13 +68,8 @@ jobs:
           submodules: true
 
       - id: setup
-        shell: python
-        run: |
-          from os        import  environ
-          from platform  import  machine, system
-          from pathlib   import  Path
-          basename = f"{environ['ASSET_BASENAME']}-{system().lower()}-{machine().lower()}"
-          output_path = Path(environ['GITHUB_OUTPUT']).write_text(f"basename={basename}\n")
+        shell: bash --noprofile --norc -o errexit -o pipefail -o nounset {0}  # -o verbose -o xtrace
+        run: echo "basename=${ASSET_BASENAME}-bin-${RUNNER_OS}-${RUNNER_ARCH}" >> $GITHUB_OUTPUT
 
       - run: pipx  install  -- meson ninja
       - run: meson setup    --reconfigure --buildtype=release     -- build
@@ -82,19 +77,23 @@ jobs:
       - run: meson install  --destdir "${BASENAME}"               -C build
         env: { BASENAME: "${{ steps.setup.outputs.basename }}", }
       - name: ZIP it
-        shell: python
+      #   shell: python
+      #   run: |
+      #     import os, pathlib, zipfile
+      #     basename = os.environ['BASENAME']
+      #     source = pathlib.Path(f"{os.environ['BUILD_DIR']}/{basename}")
+      #     with zipfile.ZipFile(f"{basename}.zip", 'w') as zf:
+      #         for file in source.rglob('*'):
+      #             if file.is_file():
+      #                 relative = source.name / file.relative_to(source)
+      #                 print(f"adding: {relative}")
+      #                 zf.write(file, relative)
+        shell: pwsh
         run: |
-          import os, pathlib, zipfile
-          basename = os.environ['BASENAME']
-          source = pathlib.Path(f"build/{basename}")
-          with zipfile.ZipFile(f"{basename}.zip", 'w') as zf:
-              for file in source.rglob('*'):
-                  if file.is_file():
-                      relative = file.relative_to(source)
-                      print(f"adding: {relative}")
-                      zf.write(file, relative)
+          Compress-Archive -Verbose -Path "$env:BUILD_DIR/$env:BASENAME" -DestinationPath $env:BASENAME.zip
         env:
           BASENAME: "${{ steps.setup.outputs.basename }}"
+          BUILD_DIR: build
       - run: gh release upload --clobber "${GH_TAG}" "${BASENAME}.zip"
         env:
           BASENAME: "${{ steps.setup.outputs.basename }}"
